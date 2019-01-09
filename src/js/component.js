@@ -126,6 +126,7 @@ class Component {
      *           set to false so that the close event does not
      *           bubble up
      */
+    
     this.trigger({type: 'dispose', bubbles: false});
 
     // Dispose all children.

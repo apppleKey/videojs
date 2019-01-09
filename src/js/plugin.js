@@ -42,8 +42,10 @@ const pluginStorage = {};
  *          The name of a plugin.
  *
  * @return {boolean}
- *          Whether or not the plugin has been registered.
+ *          Whether or not the plugin has been registered. 
+ *     插件是否已经注册
  */
+
 const pluginExists = (name) => pluginStorage.hasOwnProperty(name);
 
 /**
@@ -55,6 +57,7 @@ const pluginExists = (name) => pluginStorage.hasOwnProperty(name);
  *
  * @return {Function|undefined}
  *          The plugin (or undefined).
+ *          根据插件名获取插件
  */
 const getPlugin = (name) => pluginExists(name) ? pluginStorage[name] : undefined;
 

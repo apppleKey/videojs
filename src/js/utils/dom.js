@@ -33,7 +33,7 @@ function isNonBlankString(str) {
  *         The string to check for whitespace.
  *
  * @throws {Error}
- *         Throws an error if there is whitespace in the string.
+ *         Throws an error if there is whitespace in the string.     空格字符串判断
  */
 function throwIfWhitespace(str) {
   if ((/\s/).test(str)) {

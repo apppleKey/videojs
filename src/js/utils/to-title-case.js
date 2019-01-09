@@ -10,7 +10,7 @@
  *        String to be uppercased
  *
  * @return {string}
- *         The string with an uppercased first letter
+ *         str的首个字母大写
  */
 function toTitleCase(string) {
   if (typeof string !== 'string') {
@@ -32,7 +32,7 @@ export default toTitleCase;
  *        The second string to compare
  *
  * @return {boolean}
- *         Whether the TitleCase versions of the strings are equal
+ *         两个str首字母变大写后是否相等
  */
 export function titleCaseEquals(str1, str2) {
   return toTitleCase(str1) === toTitleCase(str2);
