@@ -2,7 +2,9 @@
  * @file video.js
  * @module videojs
  */
-import {version} from '../../package.json';
+import {
+  version
+} from '../../package.json';
 import window from 'global/window';
 import document from 'global/document';
 import * as setup from './setup';
@@ -18,20 +20,32 @@ import TextTrack from './tracks/text-track.js';
 import AudioTrack from './tracks/audio-track.js';
 import VideoTrack from './tracks/video-track.js';
 
-import { createTimeRanges } from './utils/time-ranges.js';
-import formatTime, { setFormatTime, resetFormatTime } from './utils/format-time.js';
-import log, { createLogger } from './utils/log.js';
+import {
+  createTimeRanges
+} from './utils/time-ranges.js';
+import formatTime, {
+  setFormatTime,
+  resetFormatTime
+} from './utils/format-time.js';
+import log, {
+  createLogger
+} from './utils/log.js';
 import * as Dom from './utils/dom.js';
 import * as browser from './utils/browser.js';
 import * as Url from './utils/url.js';
-import {isObject} from './utils/obj';
+import {
+  isObject
+} from './utils/obj';
 import computedStyle from './utils/computed-style.js';
 import extend from './extend.js';
 import xhr from 'xhr';
 
 // Include the built-in techs
 import Tech from './tech/tech.js';
-import { use as middlewareUse, TERMINATOR } from './tech/middleware.js';
+import {
+  use as middlewareUse,
+  TERMINATOR
+} from './tech/middleware.js';
 
 /**
  * Normalize an `id` value by trimming off a leading `#`
@@ -42,6 +56,7 @@ import { use as middlewareUse, TERMINATOR } from './tech/middleware.js';
  *
  * @return {string}
  *          The string, without any leading `#`.
+ * 去掉id的#号
  */
 const normalizeId = (id) => id.indexOf('#') === 0 ? id.slice(1) : id;
 
@@ -111,7 +126,8 @@ const normalizeId = (id) => id.indexOf('#') === 0 ? id.slice(1) : id;
  * @borrows VideoTrack as VideoTrack
  *
  * @param  {string|Element} id
- *         Video element or video element ID.
+ *         Video element or video element ID.  
+ * id可以是选择器，也可以是dom节点
  *
  * @param  {Object} [options]
  *         Options object for providing settings.
@@ -126,7 +142,7 @@ const normalizeId = (id) => id.indexOf('#') === 0 ? id.slice(1) : id;
  */
 function videojs(id, options, ready) {
   let player = videojs.getPlayer(id);
-
+  //能根据你传得得Id获取到播放器说明已经被实例化过了那么Option将不会生效 直接运行ready函数
   if (player) {
     if (options) {
       log.warn(`Player "${id}" is already initialised. Options will not be applied.`);
@@ -137,6 +153,7 @@ function videojs(id, options, ready) {
     return player;
   }
 
+  //根据id获取Dom元素（校验id等等）
   const el = (typeof id === 'string') ? Dom.$('#' + normalizeId(id)) : id;
 
   if (!Dom.isEl(el)) {
@@ -148,7 +165,7 @@ function videojs(id, options, ready) {
   }
 
   options = options || {};
-
+  //在实例化video之前调用beforesetup钩子里的所有钩子函数
   videojs.hooks('beforesetup').forEach((hookFunction) => {
     const opts = hookFunction(el, mergeOptions(options));
 
@@ -162,10 +179,11 @@ function videojs(id, options, ready) {
 
   // We get the current "Player" component here in case an integration has
   // replaced it with a custom player.
+  // 获取player组件的构造函数
   const PlayerComponent = Component.getComponent('Player');
-
+  //实例化
   player = new PlayerComponent(el, options, ready);
-
+  //实例化后的setup所有钩子函数调用
   videojs.hooks('setup').forEach((hookFunction) => hookFunction(player));
 
   return player;
@@ -185,13 +203,15 @@ videojs.hooks_ = {};
  * @param  {string} type
  *         the lifecyle to get hooks from
  *
- * @param  {Function|Function[]} [fn]
+ * @param  {Function|Function[]} [fn] 可以是函数组成的数组
  *         Optionally add a hook (or hooks) to the lifecycle that your are getting.
  *
  * @return {Array}
  *         an array of hooks, or an empty array if there are none.
+ * 可以往某个类型（beforesetup，或者setup）的数组里边添加钩子 beforesetup钩子函数必须返回一个option对象（见video.js.173）
+ * 也可以获取某一类型（beforesetup，或者setup）的钩子数组
  */
-videojs.hooks = function(type, fn) {
+videojs.hooks = function (type, fn) {
   videojs.hooks_[type] = videojs.hooks_[type] || [];
   if (fn) {
     videojs.hooks_[type] = videojs.hooks_[type].concat(fn);
@@ -208,7 +228,7 @@ videojs.hooks = function(type, fn) {
  * @param {Function|Function[]}
  *        The function or array of functions to attach.
  */
-videojs.hook = function(type, fn) {
+videojs.hook = function (type, fn) {
   videojs.hooks(type, fn);
 };
 
@@ -221,7 +241,7 @@ videojs.hook = function(type, fn) {
  * @param {Function|Function[]}
  *        The function or array of functions to attach.
  */
-videojs.hookOnce = function(type, fn) {
+videojs.hookOnce = function (type, fn) {
   videojs.hooks(type, [].concat(fn).map(original => {
     const wrapper = (...args) => {
       videojs.removeHook(type, wrapper);
@@ -244,7 +264,7 @@ videojs.hookOnce = function(type, fn) {
  * @return {boolean}
  *         The function that was removed or undef
  */
-videojs.removeHook = function(type, fn) {
+videojs.removeHook = function (type, fn) {
   const index = videojs.hooks(type).indexOf(fn);
 
   if (index <= -1) {
@@ -341,7 +361,10 @@ videojs.getPlayer = (id) => {
   }
 
   if (Dom.isEl(tag)) {
-    const {player, playerId} = tag;
+    const {
+      player,
+      playerId
+    } = tag;
 
     // Element may have a `player` property referring to an already created
     // player instance. If so, return that.
@@ -363,7 +386,8 @@ videojs.getPlayer = (id) => {
 videojs.getAllPlayers = () =>
 
   // Disposed players leave a key with a `null` value, so we need to make sure
-  // we filter those out.
+  // we filter those out. 
+  //filter(Boolean)就是要滤去数组中null的的播放器
   Object.keys(Player.players).map(k => Player.players[k]).filter(Boolean);
 
 videojs.players = Player.players;
@@ -473,12 +497,13 @@ videojs.getPluginVersion = Plugin.getPluginVersion;
  * @return {Object}
  *         The resulting language dictionary object
  */
-videojs.addLanguage = function(code, data) {
+videojs.addLanguage = function (code, data) {
   code = ('' + code).toLowerCase();
 
   videojs.options.languages = mergeOptions(
-    videojs.options.languages,
-    {[code]: data}
+    videojs.options.languages, {
+      [code]: data
+    }
   );
 
   return videojs.options.languages[code];
@@ -537,7 +562,7 @@ videojs.VideoTrack = VideoTrack;
   'appendContent',
   'insertContent'
 ].forEach(k => {
-  videojs[k] = function() {
+  videojs[k] = function () {
     log.warn(`videojs.${k}() is deprecated; use videojs.dom.${k}() instead`);
     return Dom[k].apply(null, arguments);
   };
@@ -562,4 +587,3 @@ videojs.dom = Dom;
 videojs.url = Url;
 
 export default videojs;
-

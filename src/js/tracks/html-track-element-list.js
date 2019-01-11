@@ -52,7 +52,7 @@ class HtmlTrackElementList {
       });
     }
 
-    // Do not add duplicate elements
+    // Do not add duplicate(副本) elements
     if (this.trackElements_.indexOf(trackElement) === -1) {
       this.trackElements_.push(trackElement);
     }

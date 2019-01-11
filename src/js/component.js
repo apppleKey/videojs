@@ -21,6 +21,7 @@ import mergeOptions from './utils/merge-options.js';
  * children themselves.
  *
  * Components can also use methods from {@link EventTarget}
+ *      这个是videojs的顶端 所有的类都之间或间接的继承自他
  */
 class Component {
 
@@ -48,12 +49,14 @@ class Component {
    *
    * @param {Component~ReadyCallback} [ready]
    *        Function that gets called when the `Component` is ready.
+   * 所有的类都继承自Componet，但不是所有的类都要传player
    */
   constructor(player, options, ready) {
 
-    // The component might be the player itself and we can't pass `this` to super
+    // The component might be the player itself and
+    // we can't pass `this` to super
     if (!player && this.play) {
-      this.player_ = player = this; // eslint-disable-line
+      this.player_ = player = this;
     } else {
       this.player_ = player;
     }

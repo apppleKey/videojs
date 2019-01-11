@@ -302,7 +302,7 @@ class Player extends Component {
    *        Ready callback function.
    */
   constructor(tag, options, ready) {
-    // Make sure tag ID exists
+    // Make sure tag ID exists   元素的Id
     tag.id = tag.id || options.id || `vjs_video_${Guid.newGUID()}`;
 
     // Set Options
@@ -314,9 +314,11 @@ class Player extends Component {
 
     // Delay the initialization of children because we need to set up
     // player properties first, and can't use `this` before `super()`
+    //防止父类自动执行加载子类
     options.initChildren = false;
 
     // Same with creating the element
+    //调用父类的createEl方法
     options.createEl = false;
 
     // don't auto mixin the evented mixin
@@ -324,9 +326,11 @@ class Player extends Component {
 
     // we don't want the player to report touch activity on itself
     // see enableTouchActivity in Component
+    //关闭移动端的手势动作监听
     options.reportTouchActivity = false;
 
     // If language is not set, get the closest lang attribute
+    //检查播放器的语言
     if (!options.language) {
       if (typeof tag.closest === 'function') {
         const closest = tag.closest('[lang]');
@@ -348,6 +352,7 @@ class Player extends Component {
     }
 
     // Run base component initializing with new options
+    // 初始化父类
     super(null, options, ready);
 
     // create logger
@@ -371,6 +376,7 @@ class Player extends Component {
 
     // if the global option object was accidentally blown away by
     // someone, bail early with an informative error
+    //option必须包含teachOrder参数
     if (!this.options_ ||
         !this.options_.techOrder ||
         !this.options_.techOrder.length) {
@@ -380,12 +386,15 @@ class Player extends Component {
     }
 
     // Store the original tag used to set options
+    //储存实例化的播放器
     this.tag = tag;
 
     // Store the tag attributes used to restore html5 element
+    // 储存video标签的各个属性
     this.tagAttributes = tag && Dom.getAttributes(tag);
 
     // Update current language
+    // 将默认的英文切换指定语言
     this.language(this.options_.language);
 
     // Update Supported Languages
@@ -402,24 +411,29 @@ class Player extends Component {
     }
 
     // Cache for video property values.
+    //缓存各个属性
     this.cache_ = {};
 
     // Set poster
+    //设置海报
     this.poster_ = options.poster || '';
 
     // Set controls
+    // 设置控制栏
     this.controls_ = !!options.controls;
 
     // Set default values for lastVolume
+    // 默认音量最为1
     this.cache_.lastVolume = 1;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
     // May be turned back on by HTML5 tech if nativeControlsForTouch is true
+    //默认标签关闭控制栏
     tag.controls = false;
     tag.removeAttribute('controls');
 
-    // the attribute overrides the option
+    // the attribute overrides the option 标签的自动播放优先级高于option的
     if (tag.hasAttribute('autoplay')) {
       this.options_.autoplay = true;
     } else {
@@ -484,6 +498,7 @@ class Player extends Component {
     }
 
     // Set ARIA label and region role depending on player type
+    //音频标签的处理方法
     this.el_.setAttribute('role', 'region');
     if (this.isAudio()) {
       this.el_.setAttribute('aria-label', this.localize('Audio Player'));
