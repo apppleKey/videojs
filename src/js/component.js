@@ -55,6 +55,8 @@ class Component {
 
     // The component might be the player itself and
     // we can't pass `this` to super
+    // 如果果组件指向的this指向的是player,当然不能放过
+
     if (!player && this.play) {
       this.player_ = player = this;
     } else {
@@ -62,15 +64,19 @@ class Component {
     }
 
     // Make a copy of prototype.options_ to protect against overriding defaults
+    //原型上的设置复制过来
     this.options_ = mergeOptions({}, this.options_);
 
     // Updated options with supplied options
+    //将传过来的option与之合并
     options = this.options_ = mergeOptions(this.options_, options);
 
     // Get ID from options or options element if one is supplied
+    // 从option获取Id或者从元素直接获取Id
     this.id_ = options.id || (options.el && options.el.id);
 
     // If there was no ID from the options, generate one
+    // 没有Id则自己生成一个
     if (!this.id_) {
       // Don't require the player ID function in the case of mock players
       const id = player && player.id && player.id() || 'no_player';
@@ -81,6 +87,7 @@ class Component {
     this.name_ = options.name || null;
 
     // Create element if one wasn't provided in options
+    // 如果option中没有提供el属性，就新建一个默认元素
     if (options.el) {
       this.el_ = options.el;
     } else if (options.createEl !== false) {
